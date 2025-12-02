@@ -8,12 +8,9 @@ import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.io.Serial;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -46,10 +43,18 @@ public final class LambdaFilter extends JFrame {
          * Commands.
          */
         IDENTITY("No modifications", Function.identity()),
-        TOLOWER("To lowercase", s -> s.toLowerCase()),
+        TOLOWER("To lowercase", String::toLowerCase),
         COUNTCHAR("Count characters", s -> String.valueOf(s.length())),
         COUNTLINES("Count lines", s -> String.valueOf(s.lines().count())),
-        ALPHABET("Alphabetic order", s -> Arrays.stream(s.split(" ")).sorted().collect(Collectors.joining(" ")));
+        ALPHABET("Alphabetic order", s -> Arrays.stream(s.split(" ")).sorted().collect(Collectors.joining(" "))),
+        COUNTWORD("Count words", s -> Arrays.stream(s.split(" "))
+        .filter(w -> !w.isBlank())
+        .collect(Collectors.groupingBy(
+            Function.identity(),
+            Collectors.counting()))
+        .entrySet().stream()
+        .map(e -> e.getKey() + " -> " + e.getValue())
+        .collect(Collectors.joining(" ")));
 
         private final String commandName;
         private final Function<String, String> fun;
