@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -49,6 +50,23 @@ public final class AnotherConcurrentGUI extends JFrame {
         });
         up.addActionListener(e -> agent.goUp());
         down.addActionListener(e -> agent.goDown());
+
+        final Runnable closeEverything = new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(TimeUnit.SECONDS.toMillis(10));
+                } catch (final InterruptedException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+                agent.stopCounting();
+                stop.setEnabled(false);
+                up.setEnabled(false);
+                down.setEnabled(false);
+            }
+        };
+        new Thread(closeEverything).start();
     }
 
     /*
@@ -106,3 +124,4 @@ public final class AnotherConcurrentGUI extends JFrame {
         }
     }
 }
+
