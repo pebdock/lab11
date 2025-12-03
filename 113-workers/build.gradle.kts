@@ -30,4 +30,3 @@ tasks.withType<Test>().configureEach {
 tasks.withType<Javadoc>().configureEach {
     isFailOnError = false
 }
-
